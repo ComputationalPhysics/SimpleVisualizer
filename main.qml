@@ -4,7 +4,7 @@ import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.1
-import Controller 1.0
+import CompPhys 1.0
 
 Item {
     id: controllerRoot
@@ -32,7 +32,7 @@ Item {
         console.log("Platform: " + Qt.platform.os)
     }
     
-    Controller {
+    MyController {
         id: controller
         anchors.fill: parent
         running: true

@@ -4,14 +4,15 @@
 #include <QColor>
 #include <QRgb>
 #include <cmath>
+#include <QThread>
 
 using std::vector;
 
-Billboards2D::Billboards2D(std::function<void(RenderableObject *renderableObject)> copyDataFunction, QString textureFilename)
+Billboards2D::Billboards2D(std::function<void(Billboards2D *renderableObject)> copyDataFunction, QString textureFilename)
 {
     setNumberOfVBOs(2);
     m_textureFilename = textureFilename;
-    copyData = copyDataFunction;
+    myCopyData = copyDataFunction;
     m_color = QVector3D(1.0, 1.0, 1.0);
 }
 
@@ -148,6 +149,11 @@ void Billboards2D::initialize()
     uploadTexture(m_textureFilename);
 }
 
+void Billboards2D::copyDataFunction()
+{
+    myCopyData(this);
+}
+
 void Billboards2D::setPositions(std::vector<QVector2D> &positions)
 {
     m_positions = positions;
@@ -185,6 +191,7 @@ void Billboards2D::createShaderProgram() {
 
 void Billboards2D::render(QMatrix4x4 &modelViewMatrix, QMatrix4x4 &projectionMatrix)
 {
+    qDebug() << QThread::currentThreadId() << " is billboard";
     if(m_vertices.size() == 0) return;
     createShaderProgram();
 

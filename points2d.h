@@ -10,11 +10,13 @@ struct Point2DData {
 class Points2D : public RenderableObject
 {
 public:
-    Points2D(std::function<void(RenderableObject *renderableObject)> copyDataFunction);
+    Points2D(std::function<void(Points2D *renderableObject)> copyDataFunction);
     ~Points2D();
     virtual void render(QMatrix4x4 &modelViewMatrix, QMatrix4x4 &projectionMatrix);
     virtual void uploadVBOs();
     virtual void initialize();
+    virtual void copyDataFunction();
+    std::function<void(Points2D *renderableObject)> myCopyData;
 
     float pointSize() const;
     void setPointSize(float pointSize);

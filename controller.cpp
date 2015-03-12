@@ -54,25 +54,25 @@
 #include <QOpenGLFramebufferObjectFormat>
 using namespace std;
 namespace CompPhys {
-Controller::Controller()
-    :
+Controller::Controller() :
       m_running(true),
       m_stepRequested(false),
       m_previousStepCompleted(true),
       m_simulatorOutputDirty(false),
-      m_lastStepWasBlocked(false)
+      m_lastStepWasBlocked(false),
+      m_simulatorWorker(this)
 {
-    m_simulator.moveToThread(&m_simulatorWorker);
-    connect(this, &Controller::requestStep, &m_simulator, &Simulator::step);
-    connect(&m_simulator, &Simulator::stepCompleted, this, &Controller::finalizeStep);
-    m_simulatorWorker.start();
+    m_simulatorWorker.moveToThread(&m_simulatorWorkerThread);
+    connect(this, &Controller::requestStep, &m_simulatorWorker, &Simulator::step);
+    connect(&m_simulatorWorker, &Simulator::stepCompleted, this, &Controller::finalizeStep);
+    m_simulatorWorkerThread.start();
     m_timer.start();
 }
 
 Controller::~Controller()
 {
-    m_simulatorWorker.quit();
-    m_simulatorWorker.wait();
+    m_simulatorWorkerThread.quit();
+    m_simulatorWorkerThread.wait();
 }
 
 CompPhys::Renderer* Controller::createRenderer() const
@@ -92,6 +92,7 @@ void Controller::setRunning(bool arg)
 
 void Controller::step()
 {
+    qDebug() << QThread::currentThreadId() << " is controller requesting step";
     if(!m_running) {
         return;
     }
@@ -109,9 +110,10 @@ void Controller::finalizeStep()
     m_simulatorOutputMutex.lock();
 
     // Update renderable objects from simulator
-    m_renderableObjects = m_simulator.renderableObjects();
+//    m_renderableObjects = m_simulatorWorker.renderableObjects();
     for(RenderableObject *obj : m_renderableObjects) {
-        obj->copyData(obj);
+//        obj->copyData(obj);
+        obj->copyDataFunction();
     }
 
     m_previousStepCompleted = true;
@@ -136,16 +138,16 @@ void Controller::handleWindowChanged(QQuickWindow *win)
         win->setClearBeforeRendering(false);
     }
 }
+
 vector<RenderableObject *> &Controller::renderableObjects()
 {
     return m_renderableObjects;
 }
 
-void Controller::setRenderableObjects(vector<RenderableObject *> &renderableObjects)
+void Controller::addRenderableObject(RenderableObject *renderableObject)
 {
-    m_renderableObjects = renderableObjects;
+    m_renderableObjects.push_back(renderableObject);
 }
-
 
 // ********************************************
 // ******* Basic setters and getters **********

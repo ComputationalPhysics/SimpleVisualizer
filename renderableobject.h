@@ -10,7 +10,8 @@ class RenderableObject
 public:
     RenderableObject();
     ~RenderableObject();
-    std::function<void(RenderableObject *renderableObject)> copyData;
+//    std::function<void(RenderableObject *renderableObject)> copyData;
+    virtual void copyDataFunction() = 0;
     virtual void uploadVBOs() = 0;
     virtual void render(QMatrix4x4 &modelViewMatrix, QMatrix4x4 &projectionMatrix) = 0;
     virtual void initialize() = 0;

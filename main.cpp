@@ -11,7 +11,7 @@
 #include <iostream>
 #include <QFontDatabase>
 
-#include "controller.h"
+#include "mycontroller.h"
 using namespace std;
 
 # if defined (Q_OS_IOS)
@@ -20,7 +20,7 @@ extern "C" int qtmn (int argc, char * argv [])
 int main (int argc, char * argv [])
 # endif
 {
-    qmlRegisterType<CompPhys::Controller>("Controller", 1, 0, "Controller");
+    qmlRegisterType<MyController>("CompPhys", 1, 0, "MyController");
 
     QGuiApplication app(argc, argv);
     QQuickView view;

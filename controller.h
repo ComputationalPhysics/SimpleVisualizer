@@ -72,7 +72,8 @@ public:
     bool simulatorOutputDirty() const;
 
     std::vector<RenderableObject *> &renderableObjects();
-    void setRenderableObjects(std::vector<RenderableObject *> &renderableObjects);
+    void addRenderableObject(RenderableObject* renderableObject);
+    virtual void stepImplementation() = 0;
 
 public slots:
     void setRunning(bool arg);
@@ -93,7 +94,7 @@ private slots:
 private:
     CompPhys::Renderer *m_renderer;
     std::vector<RenderableObject*> m_renderableObjects;
-    Simulator m_simulator;
+    Simulator m_simulatorWorker;
     QElapsedTimer m_timer;
     bool m_running;
 
@@ -106,7 +107,7 @@ private:
     QMutex m_simulatorInputMutex;
     QMutex m_simulatorOutputMutex;
     QMutex m_simulatorRunningMutex;
-    QThread m_simulatorWorker;
+    QThread m_simulatorWorkerThread;
     friend class CompPhys::Renderer;
 };
 }

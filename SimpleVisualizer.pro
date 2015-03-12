@@ -10,7 +10,8 @@ SOURCES += main.cpp \
     simulator.cpp \
     renderableobject.cpp \
     billboards2d.cpp \
-    points2d.cpp
+    points2d.cpp \
+    mycontroller.cpp
 RESOURCES += qml.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
@@ -25,4 +26,5 @@ HEADERS += \
     simulator.h \
     renderableobject.h \
     billboards2d.h \
-    points2d.h
+    points2d.h \
+    mycontroller.h

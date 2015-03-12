@@ -17,14 +17,16 @@ struct Billboard2DData
 class Billboards2D : public RenderableObject
 {
 public:
-    Billboards2D(std::function<void(RenderableObject *renderableObject)> copyDataFunction, QString textureFilename);
+    Billboards2D(std::function<void(Billboards2D *renderableObject)> copyDataFunction, QString textureFilename);
     ~Billboards2D();
     virtual void render(QMatrix4x4 &modelViewMatrix, QMatrix4x4 &projectionMatrix);
     virtual void uploadVBOs();
     virtual void initialize();
+    virtual void copyDataFunction();
     void setPositions(std::vector<QVector2D> &positions);
     std::vector<QVector2D> &positions();
     std::vector<float> &rotations();
+    std::function<void(Billboards2D *renderableObject)> myCopyData;
 
     float scale() const;
     void setScale(float scale);

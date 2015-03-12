@@ -1,9 +1,10 @@
 #include "points2d.h"
 using std::vector;
 
-Points2D::Points2D(std::function<void(RenderableObject *renderableObject)> copyDataFunction)
+Points2D::Points2D(std::function<void(Points2D *renderableObject)> copyDataFunction)
 {
-    copyData = copyDataFunction;
+//    copyData = copyDataFunction;
+    myCopyData = copyDataFunction;
     setNumberOfVBOs(1);
 
 }
@@ -59,6 +60,11 @@ void Points2D::uploadVBOs()
 void Points2D::initialize()
 {
 
+}
+
+void Points2D::copyDataFunction()
+{
+    myCopyData(this);
 }
 
 void Points2D::setPointSize(float pointSize)

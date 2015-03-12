@@ -5,19 +5,18 @@
 #include <vector>
 
 class RenderableObject;
+namespace CompPhys {
+class Controller;
+}
 class Simulator : public QObject
 {
     Q_OBJECT
 private:
     std::vector<RenderableObject*> m_renderableObjects;
 public:
-    Simulator(QObject* parent = 0);
+    Simulator(CompPhys::Controller* parent = 0);
     ~Simulator();
-    std::vector<QVector2D> positions;
-    std::vector<QVector2D> velocities;
-
-    std::vector<RenderableObject *> &renderableObjects();
-    void setRenderableObjects(std::vector<RenderableObject *> &renderableObjects);
+    CompPhys::Controller* m_controller;
 
 public slots:
     void step();
