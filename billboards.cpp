@@ -137,6 +137,11 @@ void Billboards::initialize()
     uploadTexture(m_textureFilename);
 }
 
+void Billboards::setPositions(std::vector<QVector2D> &positions)
+{
+    m_positions = positions;
+}
+
 void Billboards::createShaderProgram() {
     if (!m_program) {
         m_program = new QOpenGLShaderProgram();

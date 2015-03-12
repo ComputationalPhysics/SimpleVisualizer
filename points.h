@@ -1,27 +1,32 @@
 #pragma once
-#include <QtGui/QOpenGLShaderProgram>
-#include <QOpenGLFunctions>
-#include <vector>
+#include "renderableobject.h"
+#include <QColor>
 
-struct PointsData {
-    std::vector<QVector2D> positions;
-    std::vector<QVector2D> velocities;
+struct PointData {
+    QVector2D position;
+    QVector3D color;
 };
 
-class Points
+class Points : public RenderableObject
 {
 public:
-    Points();
+    Points(std::function<void(RenderableObject *renderableObject)> copyDataFunction);
     ~Points();
-    void update(const PointsData &data);
-    void render();
+    virtual void render(QMatrix4x4 &modelViewMatrix, QMatrix4x4 &projectionMatrix);
+    virtual void uploadVBOs();
+    virtual void initialize();
+
+    float pointSize() const;
+    void setPointSize(float pointSize);
+
+    void setPositions(std::vector<QVector2D> &positions);
+    std::vector<PointData> data() const;
+    void setData(std::vector<QVector2D> &positions, std::vector<QVector3D> &colors);
+    void setData(std::vector<QVector2D> &positions, QVector3D color = QVector3D(1.0, 0.0, 0.0));
+
 private:
-    GLuint m_vboIds[1];
-    unsigned int m_numberOfPoints;
-    QOpenGLFunctions *m_funcs;
-    QOpenGLShaderProgram *m_program;
+    std::vector<PointData> m_data;
+    float m_pointSize;
 
     void createShaderProgram();
-    void generateVBOs();
-    void ensureInitialized();
 };

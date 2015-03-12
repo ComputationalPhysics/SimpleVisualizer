@@ -1,5 +1,6 @@
 #include "simulator.h"
 #include "billboards.h"
+#include "points.h"
 
 #include <cmath>
 #include <iostream>
@@ -30,14 +31,20 @@ Simulator::Simulator(QObject *parent) :
     Billboards *billboards = new Billboards(
                 [&](RenderableObject *renderableObject) {
                   Billboards *obj = static_cast<Billboards*>(renderableObject);
-                  vector<QVector2D> &billboardPositions = obj->positions();
-                  billboardPositions = positions;
+                  obj->setPositions(positions);
                   }
             , ":/football.png");
 
     billboards->setScale(0.1);
 
+    Points *points = new Points([&](RenderableObject *renderableObject) {
+            Points *obj = static_cast<Points*>(renderableObject);
+            obj->setData(positions, QVector3D(1.0, 0.0, 0.0));
+            });
+    points->setPointSize(10.0);
+
     m_renderableObjects.push_back(billboards);
+    m_renderableObjects.push_back(points);
 }
 
 Simulator::~Simulator()

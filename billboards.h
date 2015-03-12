@@ -22,6 +22,7 @@ public:
     virtual void render(QMatrix4x4 &modelViewMatrix, QMatrix4x4 &projectionMatrix);
     virtual void uploadVBOs();
     virtual void initialize();
+    void setPositions(std::vector<QVector2D> &positions);
     std::vector<QVector2D> &positions();
     std::vector<float> &rotations();
 
