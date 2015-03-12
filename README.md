@@ -1,4 +1,4 @@
-VisualDiffusionRWMC
+SimpleVisualizer
 ===================
 
-Two dimensional random walk diffusion visualizer using QtOpenGL.
+A simple example showing how you can visualize positions from simulations.
