@@ -2,6 +2,7 @@
 #include "renderableobject.h"
 #include <QColor>
 
+namespace CompPhys {
 struct Point2DData {
     QVector2D position;
     QVector3D color;
@@ -32,3 +33,4 @@ private:
 
     void createShaderProgram();
 };
+}

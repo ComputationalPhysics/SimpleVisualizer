@@ -5,6 +5,8 @@
 #include <QOpenGLTexture>
 #include <vector>
 using std::vector;
+
+namespace CompPhys {
 class Simulator;
 
 struct Billboard2DData
@@ -49,3 +51,4 @@ private:
     void uploadTexture(QString filename);
     QVector3D vectorFromColor(const QColor &color);
 };
+}

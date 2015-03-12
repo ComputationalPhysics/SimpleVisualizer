@@ -3,6 +3,8 @@
 
 using std::vector;
 
+namespace CompPhys {
+
 RenderableObject::RenderableObject()
 {
 
@@ -49,4 +51,6 @@ void RenderableObject::initializeSuper()
 bool RenderableObject::isInitialized() const
 {
     return m_isInitialized;
+}
+
 }

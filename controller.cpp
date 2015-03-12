@@ -60,13 +60,8 @@ Controller::Controller() :
       m_previousStepCompleted(true),
       m_simulatorOutputDirty(false),
       m_lastStepWasBlocked(false),
-      m_simulatorWorker(this)
+      m_simulator(0)
 {
-    m_simulatorWorker.moveToThread(&m_simulatorWorkerThread);
-    connect(this, &Controller::requestStep, &m_simulatorWorker, &Simulator::step);
-    connect(&m_simulatorWorker, &Simulator::stepCompleted, this, &Controller::finalizeStep);
-    m_simulatorWorkerThread.start();
-    m_timer.start();
 }
 
 Controller::~Controller()
@@ -92,6 +87,15 @@ void Controller::setRunning(bool arg)
 
 void Controller::step()
 {
+    if(!m_simulator) {
+        m_simulator = createSimulator();
+        m_simulator->moveToThread(&m_simulatorWorkerThread);
+        connect(this, &Controller::requestStep, m_simulator, &Simulator::stepInThread);
+        connect(m_simulator, &Simulator::stepCompleted, this, &Controller::finalizeStep);
+        m_simulatorWorkerThread.start();
+        m_timer.start();
+    }
+
     qDebug() << QThread::currentThreadId() << " is controller requesting step";
     if(!m_running) {
         return;
@@ -99,6 +103,7 @@ void Controller::step()
 
     if(m_simulatorRunningMutex.tryLock()) {
         m_lastStepWasBlocked = false;
+        m_simulator->synchronize(this);
         emit requestStep();
     } else {
         m_lastStepWasBlocked = true;

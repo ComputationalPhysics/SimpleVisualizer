@@ -36,6 +36,8 @@ Item {
         id: controller
         anchors.fill: parent
         running: true
+
+        springConstant: slider.value
         
         Timer {
             id: timer
@@ -58,6 +60,20 @@ Item {
                 lastTime = currentTime
             }
         }
+    }
+
+    Slider {
+        id: slider
+        anchors {
+            top: parent.top
+            left: parent.left
+            right: parent.right
+        }
+
+        minimumValue: 0.1
+        maximumValue: 1
+        value: 0.5
+        stepSize: 0.01
     }
     
     Keys.onPressed: {

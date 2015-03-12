@@ -63,7 +63,8 @@ public:
     Controller();
     ~Controller();
 
-    CompPhys::Renderer* createRenderer() const;
+    virtual CompPhys::Renderer* createRenderer() const;
+    virtual Simulator* createSimulator() const = 0;
 
     Q_INVOKABLE void step();
 
@@ -73,7 +74,6 @@ public:
 
     std::vector<RenderableObject *> &renderableObjects();
     void addRenderableObject(RenderableObject* renderableObject);
-    virtual void stepImplementation() = 0;
 
 public slots:
     void setRunning(bool arg);
@@ -94,7 +94,7 @@ private slots:
 private:
     CompPhys::Renderer *m_renderer;
     std::vector<RenderableObject*> m_renderableObjects;
-    Simulator m_simulatorWorker;
+    Simulator* m_simulator;
     QElapsedTimer m_timer;
     bool m_running;
 

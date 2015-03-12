@@ -1,6 +1,8 @@
 #include "points2d.h"
 using std::vector;
 
+namespace CompPhys {
+
 Points2D::Points2D(std::function<void(Points2D *renderableObject)> copyDataFunction)
 {
 //    copyData = copyDataFunction;
@@ -117,3 +119,4 @@ void Points2D::createShaderProgram()
     }
 }
 
+}

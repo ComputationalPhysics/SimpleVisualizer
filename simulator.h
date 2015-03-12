@@ -4,10 +4,9 @@
 #include <QVector2D>
 #include <vector>
 
-class RenderableObject;
 namespace CompPhys {
 class Controller;
-}
+class RenderableObject;
 class Simulator : public QObject
 {
     Q_OBJECT
@@ -18,9 +17,13 @@ public:
     ~Simulator();
     CompPhys::Controller* m_controller;
 
+    virtual void step() = 0;
+    virtual void synchronize(Controller* controller) {Q_UNUSED(controller)}
+
 public slots:
-    void step();
+    void stepInThread();
 
 signals:
     void stepCompleted();
 };
+}

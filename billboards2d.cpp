@@ -8,6 +8,8 @@
 
 using std::vector;
 
+namespace CompPhys {
+
 Billboards2D::Billboards2D(std::function<void(Billboards2D *renderableObject)> copyDataFunction, QString textureFilename)
 {
     setNumberOfVBOs(2);
@@ -235,4 +237,6 @@ void Billboards2D::render(QMatrix4x4 &modelViewMatrix, QMatrix4x4 &projectionMat
     m_program->disableAttributeArray(texcoordLocation);
 
     m_program->release();
+}
+
 }

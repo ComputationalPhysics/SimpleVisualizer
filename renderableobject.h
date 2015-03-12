@@ -5,6 +5,7 @@
 #include <functional>
 class Simulator;
 
+namespace CompPhys {
 class RenderableObject
 {
 public:
@@ -31,3 +32,4 @@ private:
     bool m_isInitialized = false;
     unsigned int m_numberOfVBOs = 1;
 };
+}

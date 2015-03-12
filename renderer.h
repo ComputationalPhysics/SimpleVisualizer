@@ -9,9 +9,9 @@
 #include <QMutex>
 #include <vector>
 
-class RenderableObject;
-
 namespace CompPhys {
+
+class RenderableObject;
 
 class Renderer : public QQuickFramebufferObject::Renderer
 {

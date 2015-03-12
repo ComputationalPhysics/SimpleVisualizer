@@ -11,6 +11,8 @@
 
 using std::cout; using std::endl; using std::function; using std::vector;
 
+namespace CompPhys {
+
 Simulator::Simulator(CompPhys::Controller *parent) :
     QObject()
 {
@@ -22,9 +24,11 @@ Simulator::~Simulator()
 
 }
 
-void Simulator::step()
+void Simulator::stepInThread()
 {
     qDebug() << QThread::currentThreadId() << " is simulator";
-    m_controller->stepImplementation();
+    step();
     emit stepCompleted();
+}
+
 }
