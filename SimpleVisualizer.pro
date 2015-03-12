@@ -5,12 +5,12 @@ CONFIG += c++11
 QT += qml quick widgets opengl openglextensions
 
 SOURCES += main.cpp \
-    billboards.cpp \
     renderer.cpp \
     controller.cpp \
     simulator.cpp \
-    points.cpp \
-    renderableobject.cpp
+    renderableobject.cpp \
+    billboards2d.cpp \
+    points2d.cpp
 RESOURCES += qml.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
@@ -21,8 +21,8 @@ include(deployment.pri)
 
 HEADERS += \
     renderer.h \
-    billboards.h \
     controller.h \
     simulator.h \
-    points.h \
-    renderableobject.h
+    renderableobject.h \
+    billboards2d.h \
+    points2d.h

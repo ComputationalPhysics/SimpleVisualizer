@@ -1,19 +1,19 @@
-#include "points.h"
+#include "points2d.h"
 using std::vector;
 
-Points::Points(std::function<void(RenderableObject *renderableObject)> copyDataFunction)
+Points2D::Points2D(std::function<void(RenderableObject *renderableObject)> copyDataFunction)
 {
     copyData = copyDataFunction;
     setNumberOfVBOs(1);
 
 }
 
-Points::~Points()
+Points2D::~Points2D()
 {
 
 }
 
-void Points::render(QMatrix4x4 &modelViewMatrix, QMatrix4x4 &projectionMatrix)
+void Points2D::render(QMatrix4x4 &modelViewMatrix, QMatrix4x4 &projectionMatrix)
 {
     if(m_data.size() == 0) return;
 
@@ -30,7 +30,7 @@ void Points::render(QMatrix4x4 &modelViewMatrix, QMatrix4x4 &projectionMatrix)
     // Tell OpenGL programmable pipeline how to locate vertex position data
     int vertexLocation = m_program->attributeLocation("a_position");
     m_program->enableAttributeArray(vertexLocation);
-    m_funcs->glVertexAttribPointer(vertexLocation, 2, GL_FLOAT, GL_FALSE, sizeof(PointData),  (const void *)offset);
+    m_funcs->glVertexAttribPointer(vertexLocation, 2, GL_FLOAT, GL_FALSE, sizeof(Point2DData),  (const void *)offset);
 
     // Offset for texture coordinate
     offset += sizeof(QVector2D);
@@ -38,7 +38,7 @@ void Points::render(QMatrix4x4 &modelViewMatrix, QMatrix4x4 &projectionMatrix)
     // Tell OpenGL programmable pipeline how to locate vertex color data
     int colorLocation = m_program->attributeLocation("a_color");
     m_program->enableAttributeArray(colorLocation);
-    m_funcs->glVertexAttribPointer(colorLocation, 3, GL_FLOAT, GL_FALSE, sizeof(PointData), (const void *)offset);
+    m_funcs->glVertexAttribPointer(colorLocation, 3, GL_FLOAT, GL_FALSE, sizeof(Point2DData), (const void *)offset);
 
     // Draw cube geometry using indices from VBO 1
     glPointSize(m_pointSize);
@@ -49,24 +49,24 @@ void Points::render(QMatrix4x4 &modelViewMatrix, QMatrix4x4 &projectionMatrix)
     m_program->release();
 }
 
-void Points::uploadVBOs()
+void Points2D::uploadVBOs()
 {
     // Transfer vertex data to VBO 0
     m_funcs->glBindBuffer(GL_ARRAY_BUFFER, m_vboIds[0]);
-    m_funcs->glBufferData(GL_ARRAY_BUFFER, m_data.size() * sizeof(PointData), &m_data.front(), GL_STATIC_DRAW);
+    m_funcs->glBufferData(GL_ARRAY_BUFFER, m_data.size() * sizeof(Point2DData), &m_data.front(), GL_STATIC_DRAW);
 }
 
-void Points::initialize()
+void Points2D::initialize()
 {
 
 }
 
-void Points::setPointSize(float pointSize)
+void Points2D::setPointSize(float pointSize)
 {
     m_pointSize = pointSize;
 }
 
-void Points::setData(std::vector<QVector2D> &positions, std::vector<QVector3D> &colors)
+void Points2D::setData(std::vector<QVector2D> &positions, std::vector<QVector3D> &colors)
 {
     m_data.resize(positions.size());
     for(unsigned int i=0; i<positions.size(); i++) {
@@ -75,7 +75,7 @@ void Points::setData(std::vector<QVector2D> &positions, std::vector<QVector3D> &
     }
 }
 
-void Points::setData(vector<QVector2D> &positions, QVector3D color)
+void Points2D::setData(vector<QVector2D> &positions, QVector3D color)
 {
     m_data.resize(positions.size());
     for(unsigned int i=0; i<positions.size(); i++) {
@@ -86,7 +86,7 @@ void Points::setData(vector<QVector2D> &positions, QVector3D color)
 
 
 
-void Points::createShaderProgram()
+void Points2D::createShaderProgram()
 {
     if (!m_program) {
         m_program = new QOpenGLShaderProgram();

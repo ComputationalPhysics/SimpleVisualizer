@@ -1,4 +1,4 @@
-#include <billboards.h>
+#include <billboards2d.h>
 #include <QOpenGLFunctions>
 #include <QFileInfo>
 #include <QColor>
@@ -7,19 +7,20 @@
 
 using std::vector;
 
-Billboards::Billboards(std::function<void(RenderableObject *renderableObject)> copyDataFunction, QString textureFilename)
+Billboards2D::Billboards2D(std::function<void(RenderableObject *renderableObject)> copyDataFunction, QString textureFilename)
 {
     setNumberOfVBOs(2);
     m_textureFilename = textureFilename;
     copyData = copyDataFunction;
+    m_color = QVector3D(1.0, 1.0, 1.0);
 }
 
-Billboards::~Billboards()
+Billboards2D::~Billboards2D()
 {
 
 }
 
-void Billboards::uploadTexture(QString filename)
+void Billboards2D::uploadTexture(QString filename)
 {
     QFileInfo info(filename);
     if(!info.exists()) {
@@ -29,32 +30,42 @@ void Billboards::uploadTexture(QString filename)
     m_texture = new QOpenGLTexture(QImage(filename).mirrored());
 }
 
-QVector3D Billboards::vectorFromColor(const QColor &color)
+QVector3D Billboards2D::vectorFromColor(const QColor &color)
 {
     return QVector3D(color.redF(), color.greenF(), color.blueF());
 }
 
-std::vector<QVector2D> &Billboards::positions()
+std::vector<QVector2D> &Billboards2D::positions()
 {
     return m_positions;
 }
 
-std::vector<float> &Billboards::rotations()
+std::vector<float> &Billboards2D::rotations()
 {
     return m_rotations;
 }
-float Billboards::scale() const
+float Billboards2D::scale() const
 {
     return m_scale;
 }
 
-void Billboards::setScale(float scale)
+void Billboards2D::setScale(float scale)
 {
     m_scale = scale;
 }
+QVector3D Billboards2D::color() const
+{
+    return m_color;
+}
+
+void Billboards2D::setColor(const QColor &color)
+{
+    m_color = vectorFromColor(color);
+}
 
 
-void Billboards::uploadVBOs()
+
+void Billboards2D::uploadVBOs()
 {
     QVector2D right;
     right.setX(1.0);
@@ -72,7 +83,7 @@ void Billboards::uploadVBOs()
     m_vertices.resize(numberOfVertices);
     m_indices.resize(6*m_positions.size());
 
-    QVector3D normalColor = vectorFromColor(QColor("#1f78b4"));
+    QVector3D normalColor = m_color;
 
     for(unsigned int i=0; i<m_positions.size(); i++) {
         QVector2D &position = m_positions[i];
@@ -125,24 +136,24 @@ void Billboards::uploadVBOs()
 
     // Transfer vertex data to VBO 0
     m_funcs->glBindBuffer(GL_ARRAY_BUFFER, m_vboIds[0]);
-    m_funcs->glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(BillboardData), &m_vertices[0], GL_STATIC_DRAW);
+    m_funcs->glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(Billboard2DData), &m_vertices[0], GL_STATIC_DRAW);
 
     // Transfer index data to VBO 1
     m_funcs->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vboIds[1]);
     m_funcs->glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indices.size() * sizeof(GLuint), &m_indices[0], GL_STATIC_DRAW);
 }
 
-void Billboards::initialize()
+void Billboards2D::initialize()
 {
     uploadTexture(m_textureFilename);
 }
 
-void Billboards::setPositions(std::vector<QVector2D> &positions)
+void Billboards2D::setPositions(std::vector<QVector2D> &positions)
 {
     m_positions = positions;
 }
 
-void Billboards::createShaderProgram() {
+void Billboards2D::createShaderProgram() {
     if (!m_program) {
         m_program = new QOpenGLShaderProgram();
 
@@ -172,7 +183,7 @@ void Billboards::createShaderProgram() {
     }
 }
 
-void Billboards::render(QMatrix4x4 &modelViewMatrix, QMatrix4x4 &projectionMatrix)
+void Billboards2D::render(QMatrix4x4 &modelViewMatrix, QMatrix4x4 &projectionMatrix)
 {
     if(m_vertices.size() == 0) return;
     createShaderProgram();
@@ -189,7 +200,7 @@ void Billboards::render(QMatrix4x4 &modelViewMatrix, QMatrix4x4 &projectionMatri
     // Tell OpenGL programmable pipeline how to locate vertex position data
     int vertexLocation = m_program->attributeLocation("a_position");
     m_program->enableAttributeArray(vertexLocation);
-    m_funcs->glVertexAttribPointer(vertexLocation, 2, GL_FLOAT, GL_FALSE, sizeof(BillboardData), (const void *)offset);
+    m_funcs->glVertexAttribPointer(vertexLocation, 2, GL_FLOAT, GL_FALSE, sizeof(Billboard2DData), (const void *)offset);
 
     // Offset for texture coordinate
     offset += sizeof(QVector2D);
@@ -197,7 +208,7 @@ void Billboards::render(QMatrix4x4 &modelViewMatrix, QMatrix4x4 &projectionMatri
     // Tell OpenGL programmable pipeline how to locate vertex color data
     int colorLocation = m_program->attributeLocation("a_color");
     m_program->enableAttributeArray(colorLocation);
-    m_funcs->glVertexAttribPointer(colorLocation, 3, GL_FLOAT, GL_FALSE, sizeof(BillboardData), (const void *)offset);
+    m_funcs->glVertexAttribPointer(colorLocation, 3, GL_FLOAT, GL_FALSE, sizeof(Billboard2DData), (const void *)offset);
 
     // Offset for texture coordinate
     offset += sizeof(QVector3D);
@@ -205,7 +216,7 @@ void Billboards::render(QMatrix4x4 &modelViewMatrix, QMatrix4x4 &projectionMatri
     // Tell OpenGL programmable pipeline how to locate vertex texture coordinate data
     int texcoordLocation = m_program->attributeLocation("a_texcoord");
     m_program->enableAttributeArray(texcoordLocation);
-    m_funcs->glVertexAttribPointer(texcoordLocation, 2, GL_FLOAT, GL_FALSE, sizeof(BillboardData), (const void *)offset);
+    m_funcs->glVertexAttribPointer(texcoordLocation, 2, GL_FLOAT, GL_FALSE, sizeof(Billboard2DData), (const void *)offset);
 
     // Draw cube geometry using indices from VBO 1
     // glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_SHORT, 0);
